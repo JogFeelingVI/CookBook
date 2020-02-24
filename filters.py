@@ -26,5 +26,17 @@ def nametuple():
 	r1x, *_ = nOld
 	print(r1x)
 
+def sumx():
+	lis = [1, 2, 5 , 7, 3, 9]
+	print(sum(x * 10 for x in lis))
+	dic = [{'v': 122, }, {'v': 34}, {'v': 78}]
+	print(sum(x.get('v') for x in dic))
+	dicc = namedtuple('dic', 'v')
+	dicx = [dicc(x['v']) for x in dic]
+	print(sum(x.v for x in dicx))
+	print(max(x.v for x in dicx))
+
+
+
 if __name__ == '__main__':
-	nametuple()
+	sumx()
