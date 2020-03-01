@@ -5,6 +5,7 @@
 # @Name	   : usre.py
 
 from collections import namedtuple
+import re, fnmatch
 
 def filter_a():
 	def insx(Na):
@@ -36,7 +37,17 @@ def sumx():
 	print(sum(x.v for x in dicx))
 	print(max(x.v for x in dicx))
 
+def split_re():
+	line = 'ling x   wind,tmp* dex'
+	rex = re.split(r'[\s*,]\s*', line)
+	print(rex)
+	url = 'https://www.google.com'
+	print(url.startswith('https://'))
+	sta = ['01,03,06,18,19,20', '07,12,16,19,32,33', '03,04,06,19,27,32', '09,12,16,23,27,29']
+	stv = [x for x in sta if fnmatch.fnmatch(x, '*03*06*')]
+	print(stv)
+
 
 
 if __name__ == '__main__':
-	sumx()
+	split_re()
