@@ -47,7 +47,48 @@ def split_re():
 	stv = [x for x in sta if fnmatch.fnmatch(x, '*03*06*')]
 	print(stv)
 
+def re_time():
+	times = ['11/22/2020', 'Nov 27, 2012']
+	compile_re = re.compile('\d+/\d+/\d+')
+	for s in times:
+		test = ['N','Y'][compile_re.match(s) is not None]
+		print(f'{s:>15} Test {test}')
 
+def re_group():
+	txt = '010203040506070809101112'
+	re_comp = re.compile('(\d{2})')
+	group = re_comp.findall(txt)
+	print(group)
+
+def re_sub():
+	def chang_m(m):
+		M,D,Y = m.groups()
+		M = [M, f'{M:0>2}'][len(M) == 1]
+		D = [D, f'{D:0>2}'][len(D) == 1]
+		return f'{Y}-{M}-{D}'
+	text = 'Today is 11/27/2012. PyCon starts 3/13/2013.'
+	print(text)
+	text = re.sub(r'(\d+)/(\d+)/(\d+)', chang_m, text)
+	print(text)
+
+def re_ign():
+	def chang(word:str):
+		def subp(m):
+			text = m.group()
+			if text.isupper():
+				return word.upper()
+			elif text.islower():
+				return word.lower()
+			elif text[0].isupper():
+				return word.capitalize()
+			else:
+				return word
+		return subp
+	txt = 'UPPER PYTHON, lower python, Mixed Python'
+	print(txt)
+	re_comp = re.compile(r'python', flags=re.IGNORECASE)
+	finds = re_comp.sub(chang('snake'), txt)
+	print(finds)
 
 if __name__ == '__main__':
-	split_re()
+	re_ign()
