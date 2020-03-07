@@ -90,5 +90,10 @@ def re_ign():
 	finds = re_comp.sub(chang('snake'), txt)
 	print(finds)
 
+def text_just():
+	text = 'Ni Hao feelingVI'
+	lj = text.center(40, '-')
+	print(f'[{lj}]')
+
 if __name__ == '__main__':
-	re_ign()
+	text_just()
