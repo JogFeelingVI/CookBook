@@ -5,7 +5,7 @@
 # @Name	   : usre.py
 
 from collections import namedtuple
-import re, fnmatch
+import re, fnmatch, unicodedata, textwrap, html
 
 def filter_a():
 	def insx(Na):
@@ -90,5 +90,90 @@ def re_ign():
 	finds = re_comp.sub(chang('snake'), txt)
 	print(finds)
 
+def re_tanlian():
+	text = 'Computer says "no." Phone says "yes."'
+	recx = re.compile(r'"(.*?)"')
+	resc = recx.findall(text)
+	print(resc)
+
+def re_muline():
+	text = '/* this is info multiline comment */'
+	textx = '''
+	The watchdog announced its move on Thursday, after /* several media outlets, 
+	including the Post */ reported that “CSI masks”, 
+	made by inmates at factories run by the Correctional Services Industries for civil servants’ use, 
+	had not been properly accounted for by the departments that received them.
+	'''
+	recmp = re.compile(r'/\*\s((?:.|\n)*?)\s\*/')
+	ftxt = recmp.findall(textx)
+	print(ftxt)
+
+def unicode():
+	s1 = 'Spicy Jalape\u00f1o'
+	s2 = 'Spicy Jalapen\u0303o'
+	print(f'S1 {s1} {len(s1)} S2 {s2} {len(s2)}')
+	t1 = unicodedata.normalize('NFC', s1)
+	t2 = unicodedata.normalize('NFD', s2)
+	print(f'T1 {t1} {len(t1)} T2 {t2} {len(t2)}')
+	uStr = [[x, f'\\u{x:0>4}'] for x in range(1, 1000)]
+	for nu, sr in uStr:
+		print(f'U {nu} US {sr} {sr.encode("utf-8").decode("unicode_escape")}')
+
+def re_strip():
+	text = '''
+	def unicode():
+	s1 = 'Spicy Jalape\u00f1o'
+	s2 = 'Spicy Jalapen\u0303o'
+	print(f'S1 {s1} {len(s1)} S2 {s2} {len(s2)}')
+	t1 = unicodedata.normalize('NFC', s1)
+	t2 = unicodedata.normalize('NFD', s2)
+	print(f'T1 {t1} {len(t1)} T2 {t2} {len(t2)}')
+	uStr = [[x, f'\\u{x:0>4}'] for x in range(1, 1000)]
+	for nu, sr in uStr:
+		print(f'U {nu} US {sr} {sr.encode("utf-8").decode("unicode_escape")}')
+	'''
+	print(text)
+	reps = {
+		ord('\'') : '',
+		ord('"') : '',
+	}
+	text = text.translate(reps)
+	print(text)
+
+class user:
+	def __init__(self):
+		self.name = 'FeelingX'
+		self.age = 47
+
+	def __missing__(self, key):
+		return '{' + key + '}'
+
+class subvars(dict):
+	def __missing__(self, key):
+		return f'{{{key}}}'
+
+def str_format():
+	text = 'name {name} age {age}, LV {Lcv}'
+	info = user()
+	usr = text.format_map(subvars(vars(info)))
+	print(usr)
+
+def long_text():
+	text = 'Look into my eyes, look into my eyes, the eyes, the eyes, the eyes, not around the eyes, ' \
+		   'dont look around the eyes, look into my eyes, youre under.'
+	reps = {
+		ord('\r') : '',
+		ord('\n') : '',
+		ord('\t'): '{S*}'
+	}
+	text = text.translate(reps)
+	print(textwrap.fill(text, 70, initial_indent='    '))
+
+def str_to_html():
+	text = 'Elements are written as "<tag>text</tag>".'
+	print(text)
+	print(html.escape(text))
+	print(html.escape(text, quote=False))
+
 if __name__ == '__main__':
-	re_ign()
+	str_to_html()
