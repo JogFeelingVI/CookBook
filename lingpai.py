@@ -40,12 +40,11 @@ class ExpressionEvaluator:
 		self.tokens = generate_tokens(text)
 		self.tok, self.ntok = None, None
 		self._advance()
-		self.expr()
+		return self.expr()
 
 	def _advance(self):
 		self.tok = self.ntok
-		self.ntok = next(self.tokens)
-		print(self.ntok.type)
+		self.ntok = next(self.tokens, None)
 
 	def _accept(self, token_type):
 		if self.ntok and self.ntok.type == token_type:
@@ -54,10 +53,58 @@ class ExpressionEvaluator:
 		else:
 			return False
 
-def descent_parser():
+	def _expect(self, token_type):
+		if not self._accept(token_type):
+			raise SyntaxError(f'Expected {token_type}')
+
+	def expr(self):
+		'''
+		num +|- other
+		expression ::= term { ('+'|'-') term }*
+		:return:
+		'''
+		exprval = self.term()
+		while self._accept('PLUS') or self._accept('MINUS'):
+			op = self.tok.type
+			r_item = self.term()
+			if op == 'PLUS':
+				exprval += r_item
+			elif op == 'MINUS':
+				exprval -= r_item
+		return exprval
+
+	def term(self):
+		termval = self.factor()
+		while self._accept('TIMES') or self._accept('DIVIDE'):
+			op = self.tok.type
+			r_item = self.factor()
+			if op == 'TIMES':
+				termval *= r_item
+			elif op == 'DIVIDE':
+				termval /= r_item
+		return termval
+
+	def factor(self):
+		'''
+		factor ::= NUM | ( expr )
+		:return:
+		'''
+		if self._accept('NUM'):
+			return float(self.tok.value)
+		elif self._accept('LPAREN'):
+			exprval = self.expr()
+			self._expect('RPAREN')
+			return  exprval
+		else:
+			raise SyntaxError('NUM and LPAREN')
+
+def descent_parser(text:str):
 	print(' Test start '.center(70, '-'))
 	e = ExpressionEvaluator()
-	test_a = e.parse('2+3')
+	formula = (f'{text}')
+	result = f'{e.parse(text)}'
+	strs = f'Formula {formula}\n result {result}'
+	print(strs)
 
 if __name__ == '__main__':
-	descent_parser()
+	descent_parser('2+(2*23)')
