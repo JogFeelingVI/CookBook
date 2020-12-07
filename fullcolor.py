@@ -44,14 +44,21 @@ def echo(msg: str) -> None:
 
 def color_code(mt: int = None,
                fc: int = None,
-               bc: int = None,
+               bg: int = None,
                msg: str = 'None') -> str:
     ''' \033[显示方式;前景色;背景色m '''
-    format = '\x1b[{m};{f};{b}m{msg}\x1b[0m'
-    mt = ['0', f'{mt}'][mt is not None]
-    fc = ['0', f'{fc}'][fc is not None]
-    bc = ['0', f'{bc}'][bc is not None]
-    return format.format(m=mt, f=fc, b=bc, msg=msg)
+    fmat = '\033[{code}{msg}\033[0m'
+    switch = {
+          0: '',
+          1: '{}m',
+          2: '{};{}m',
+          3: '{};{};{}m'
+    }
+    code = [x for x in [mt, fc, bg] if x != None and x != 0]
+    code_len = code.__len__()
+    code_f = switch.get(code_len).format(*code)
+    msg = f'{msg}'
+    return fmat.format(code=code_f, msg=msg)
 
 
 def full_color() -> None:
@@ -60,14 +67,14 @@ def full_color() -> None:
         for f in range(30, 37):
             for b in range(40, 48):
                 code = f' {m};{f};{b} '
-                echo(color_code(mt=m, fc=f, bc=b, msg=code))
+                echo(color_code(mt=m, fc=f, bg=b, msg=code))
             echo('\n')
         echo('\n')
     echo('\n')
 
 
 def loads():
-    msg = color_code(bc=32, msg='loading...')
+    msg = color_code(bg=32, msg='loading...')
     echo(msg=msg)
     for x in range(0, 100):
         _st = f'{x+1}%'
@@ -75,11 +82,11 @@ def loads():
         sys.stdout.write(Left.format(n=_st.__len__()))
         sys.stdout.flush()
         #time.sleep(1)
-        code = color_code(msg=_st, bc=Red)
+        code = color_code(msg=_st, fc=Red)
         sys.stdout.write(code)
         sys.stdout.flush()
 
 
-if __name__ == '__main__':
-    #full_color()
+if __name__ == '__main__':  
+    full_color()
     loads()
