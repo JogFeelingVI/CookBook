@@ -24,9 +24,13 @@ Bg_Magenta = 45
 Bg_Cyan = 46
 Bg_White = 47
 
+Terminal = 0
 Bold = 1
 Underline = 4
+Blinking = 5
 Reversed = 7
+Invisible = 8
+
 
 Up = '\x1b[{n}A'
 Down = '\x1b[{n}B'
