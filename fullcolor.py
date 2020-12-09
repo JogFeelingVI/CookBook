@@ -89,4 +89,4 @@ def loads():
 
 if __name__ == '__main__':  
     full_color()
-    loads()
+    #loads()
