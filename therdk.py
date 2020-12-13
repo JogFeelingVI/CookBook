@@ -11,6 +11,7 @@ def combin(count: int = 6) -> Iterable:
           20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33)
     tp: Iterator = combinations(nl, count)
     ls: Iterator = (islice(tp, 1000) for x in range(0, 1107568, 1000))
+    #ls = (x for x in islice(tp, 0, 1107568, 1000))
     return ls
 
 
@@ -21,4 +22,4 @@ if __name__ == '__main__':
         for c in x:
             print(f'index {vix:>7} {c}')
             vix +=1
-            
+            #  10  45   9

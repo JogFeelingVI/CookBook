@@ -12,9 +12,10 @@ class outs:
     def __init__(self) -> None:
         self._stw = sys.stdout
 
-    def write(self, code: Any) -> None:
+    def write(self, code: Any, flush:bool = True) -> None:
         self._stw.write(code)
-        self._stw.flush()
+        if flush is True:
+            self._stw.flush()
 
     def move(self, n: int, efc: Literal['u', 'd', 'l', 'r']) -> None:
         efcd = {
@@ -23,7 +24,7 @@ class outs:
             'r': '\x1b[{n}C',
             'l': '\x1b[{n}D',
         }
-        self.write(efcd.get(efc, '\x1b[{n}A').format(n=n))
+        self.write(efcd.get(efc, '\x1b[{n}A').format(n=n), False)
 
     def wrap(self) -> None:
         self.write('\n')
@@ -45,7 +46,8 @@ class Tasks:
         for i in range(0, ns):
             if self._run:
                 addx = addx + i
-                self._out.move(100, 'l')
+                self._out.move(22, 'l')
+                #T-times ->  10  45   9
                 self._out.write(f'T-times -> {ns:>3} {addx:>3} {i:>3}')
                 time.sleep(0.1)
             else:
