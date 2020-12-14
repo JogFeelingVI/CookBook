@@ -4,7 +4,7 @@
 # @Last Modified time: 2020-12-11 08:04:46
 import time, sys
 from threading import Thread, Event
-from typing import Any, Literal
+from typing import Any, Literal, Union
 
 
 class outs:
@@ -12,7 +12,7 @@ class outs:
     def __init__(self) -> None:
         self._stw = sys.stdout
 
-    def write(self, code: Any, flush:bool = True) -> None:
+    def write(self, code: Any, flush: bool = True) -> None:
         self._stw.write(code)
         if flush is True:
             self._stw.flush()
@@ -30,8 +30,44 @@ class outs:
         self.write('\n')
 
 
+class progress:
+    ''' show progress bar '''
+    _title: str = 'progress'
+    _length: int = 60
+    E: str = ' '
+    F: str = '-'
+    S: outs = outs()
+
+    def __init__(self,
+                 max: Union[float, int],
+                 title: str = 'progress',
+                 length: int = 60) -> None:
+        self._max = max
+        self._title = title
+        self._length = 60
+
+    @property
+    def length(self) -> int:
+        return self._length
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @title.setter
+    def title(self, value: str) -> None:
+        self._title = value
+
+    def value(self, val: Union[float, int]) -> None:
+        bx: float = val / self._max + 0.01
+        pv: int = int(bx * self._length)
+        bar = f'{self.title}: [{self.F*pv}{(self._length-pv)*self.E}] {bx:>4.0%}'
+        self.S.move(bar.__len__(), 'l')
+        self.S.write(bar)
+
+
 class Tasks:
-    def __init__(self, even:Event) -> None:
+    def __init__(self, even: Event) -> None:
         self._run = True
         self._out = outs()
         self._eve = even
@@ -46,12 +82,13 @@ class Tasks:
         for i in range(0, ns):
             if self._run:
                 addx = addx + i
-                self._out.move(22, 'l')
-                #T-times ->  10  45   9
-                self._out.write(f'T-times -> {ns:>3} {addx:>3} {i:>3}')
+                self._out.move(25, 'l')
+                # T-times -> 100 4950  99
+                self._out.write(f'T-times -> {ns:>3} {addx:>5} {i:>3}')
                 time.sleep(0.1)
             else:
-                print(f'{self._run} close task')
+                self._out.wrap()
+                self._out.write(f'{self._run} close task')
                 break
         self._out.write('\ncountdown over\n')
 
@@ -59,12 +96,12 @@ class Tasks:
 def T_work() -> None:
     E = Event()
     C = Tasks(E)
-    T = Thread(target=C.countdown, args=(10, ))
-    T.start()
-    while (T.is_alive()):
+    P = progress(100)
+    #T = Thread(target=C.countdown, args=(100, ))
+    #T.start()
+    for x in range(0, 100):
+        P.value(x)
         time.sleep(0.1)
-        #cT.close()
-    print('T is Over')
 
 
 if __name__ == '__main__':
