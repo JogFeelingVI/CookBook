@@ -3,6 +3,7 @@
 # @Last Modified by:   By JogFeelingVi
 # @Last Modified time: 2020-12-11 08:04:46
 import time, sys
+from timeit import Timer
 from threading import Thread, Event
 from typing import Any, Literal, Union
 
@@ -105,4 +106,5 @@ def T_work() -> None:
 
 
 if __name__ == '__main__':
-    T_work()
+    t = Timer('T_work()', 'from __main__ import T_work')
+    print(t.repeat(repeat=1, number=1))
