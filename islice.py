@@ -10,6 +10,17 @@ def nouadd(number: int) -> int:
         yield number
         number = number + 1
 
+def nasdd(min: int, max: int) -> int:
+    while min <= max:
+        yield min
+        min = min + 1
+
+def lsdd():
+    c = nasdd(1, 16)
+    Qcs = [itertools.islice(c, 5) for x in range(0, (32-4), 5)]
+    for q in Qcs:
+        print(list(q))
+
 
 if __name__ == '__main__':
     nadd = nouadd(5)
@@ -19,3 +30,6 @@ if __name__ == '__main__':
     rsplit = (itertools.islice(nadd, 10) for x in range(0, 100, 10))
     for x in rsplit:
         print(list(x))
+    lsdd()
+    for x in range(4, 32):
+        print(x)

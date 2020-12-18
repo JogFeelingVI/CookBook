@@ -3,7 +3,7 @@
 # @Last Modified by:   By JogFeelingVi
 # @Last Modified time: 2020-12-15 07:57:38
 from threading import Thread
-from timeit import Timer
+from timeit import Timer, timeit
 
 # https://juejin.cn/post/6844903574774759437
 # https://codertw.com/程式語言/693491/
@@ -23,7 +23,6 @@ class F_class:
 
 def func_test() -> None:
     ''' Test Code the here '''
-    vx = [x for x in range(1000) if x % 3 == 1 and x % 4 == 3]
 
 
 def y_threaded(count: int = 1) -> None:
@@ -42,11 +41,11 @@ def n_threaded(count: int = 1) -> None:
         ru.run()
 
 
-def show_repeat(funame: str, repeat:float) -> None:
+def show_repeat(funame: str, repeat: float) -> None:
     print(f'    {funame} -> {repeat:4.6f}')
 
 
-if __name__ == '__main__':
+def code() -> None:
     repeat: int = 100
     number: int = 1
     counts: list = [1, 2, 4, 8]
@@ -59,3 +58,34 @@ if __name__ == '__main__':
         y_repeat = min(y_t.repeat(repeat=repeat, number=number))
         show_repeat(f'y_threaded {c}', y_repeat)
         print(f'Test {c} ---')
+
+class tsp2:
+    def __init__(self) -> None:
+        self.map = {}
+    
+    def p_map(self, Qc=[4,5,6]) -> dict:
+        for c in Qc:
+            self.fx(c)
+        return self.map
+
+    def fx(self, c:int) -> None:
+        self.map[c] = [x for x in range(c, c * 100, c)]
+
+
+def code_ts1() -> None:
+    def p1():
+        for x in range(0, 10000):
+            ex = 'y' if x % 3 == 0 else 'n'
+
+    def p2():
+        for x in range(10000):
+            ex = ['n', 'y'][x%3 ==0]
+        
+    t1 = timeit(p1, number=100)
+    print(f'T1 {t1}')
+    t2 = timeit(p2, number=100)
+    print(f'T2 {t2}')
+
+
+if __name__ == '__main__':
+    code_ts1()
