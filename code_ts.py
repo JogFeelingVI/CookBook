@@ -4,6 +4,7 @@
 # @Last Modified time: 2020-12-15 07:57:38
 from threading import Thread
 from timeit import Timer, timeit
+from itertools import islice
 
 # https://juejin.cn/post/6844903574774759437
 # https://codertw.com/程式語言/693491/
@@ -71,19 +72,30 @@ class tsp2:
     def fx(self, c:int) -> None:
         self.map[c] = [x for x in range(c, c * 100, c)]
 
+def Nadd(min:int, max:int, sz: int = 10) -> list:
+    while min <= max:
+        yield [x for x in range(min, min + sz) if x <= max]
+        min += sz
+
+def Nadd2(min: int, max:int) -> int:
+    while min <= max:
+        yield min
+        min += 1
+
 
 def code_ts1() -> None:
     def p1():
-        for x in range(0, 10000):
-            ex = 'y' if x % 3 == 0 else 'n'
+        for x in Nadd(4,32):
+            print(x)
 
     def p2():
-        for x in range(10000):
-            ex = ['n', 'y'][x%3 ==0]
+        ml = (list(islice(Nadd(4, 32), 10)) for x in range(4, 32, 10))
+        for x in ml:
+            print(x)
         
-    t1 = timeit(p1, number=100)
+    t1 = timeit(p1, number=10)
     print(f'T1 {t1}')
-    t2 = timeit(p2, number=100)
+    t2 = timeit(p2, number=10)
     print(f'T2 {t2}')
 
 
