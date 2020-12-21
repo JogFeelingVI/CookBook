@@ -4,7 +4,9 @@
 # @Last Modified time: 2020-12-15 07:57:38
 from threading import Thread
 from timeit import Timer, timeit
-from itertools import islice
+from itertools import islice, combinations
+from typing import Iterable
+import os
 
 # https://juejin.cn/post/6844903574774759437
 # https://codertw.com/程式語言/693491/
@@ -60,44 +62,55 @@ def code() -> None:
         show_repeat(f'y_threaded {c}', y_repeat)
         print(f'Test {c} ---')
 
-class tsp2:
+
+def old_list():
+    """ 新方法效率提高不少 """
+    _sz = 1000
+    nl = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+          20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33)
+    Lp = combinations(nl, 6)
+    return (list(islice(Lp, _sz)) for x in range(0, 1107568, _sz))
+
+
+def new_list():
+    cb = yieldcombin()
+    lp = cb.readpage()
+    return lp
+
+
+def code_ts2() -> None:
+    t1 = timeit('old_list()', 'from __main__ import old_list', number=10000)
+    print(f'old_list {t1}')
+    t2 = timeit('new_list()', 'from __main__ import new_list', number=10000)
+    print(f'new_list {t2}')
+
+
+class yieldcombin:
+    min, max = 0, 1107568
+    nl = 0
+
     def __init__(self) -> None:
-        self.map = {}
-    
-    def p_map(self, Qc=[4,5,6]) -> dict:
-        for c in Qc:
-            self.fx(c)
-        return self.map
+        self.combin_list = self.__combin()
+        self.cpuc = os.cpu_count()
+        self.psize = self.max // self.cpuc + 1
 
-    def fx(self, c:int) -> None:
-        self.map[c] = [x for x in range(c, c * 100, c)]
+    def seting_psize(self, sz: int = 1000):
+        self.psize = sz
 
-def Nadd(min:int, max:int, sz: int = 10) -> list:
-    while min <= max:
-        yield [x for x in range(min, min + sz) if x <= max]
-        min += sz
+    def __combin(self) -> Iterable:
+        '''
+            [1, 2, 3, 4, 5, 6]...
+        '''
+        nl = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+              19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33)
+        return combinations(nl, 6)
 
-def Nadd2(min: int, max:int) -> int:
-    while min <= max:
-        yield min
-        min += 1
-
-
-def code_ts1() -> None:
-    def p1():
-        for x in Nadd(4,32):
-            print(x)
-
-    def p2():
-        ml = (list(islice(Nadd(4, 32), 10)) for x in range(4, 32, 10))
-        for x in ml:
-            print(x)
-        
-    t1 = timeit(p1, number=10)
-    print(f'T1 {t1}')
-    t2 = timeit(p2, number=10)
-    print(f'T2 {t2}')
+    def readpage(self) -> list:
+        while self.min <= self.max:
+            yield islice(self.combin_list, self.psize)
+            self.min += self.psize
 
 
 if __name__ == '__main__':
-    code_ts1()
+    # code_ts2()
+    code_ts2()

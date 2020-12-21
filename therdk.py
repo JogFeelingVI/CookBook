@@ -4,6 +4,7 @@
 # @Last Modified time: 2020-12-09 17:09:00
 from itertools import combinations, islice
 from typing import Generator, Iterable, Iterator
+import time
 
 
 def combin(count: int = 6) -> Iterable:
@@ -14,7 +15,7 @@ def combin(count: int = 6) -> Iterable:
 
     Returns:
         Iterable: [description]
-    """    ''' '''
+    """ ''' '''
     nl = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
           20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33)
     tp: Iterator = combinations(nl, count)
@@ -29,5 +30,6 @@ if __name__ == '__main__':
     for x in cx:
         for c in x:
             print(f'index {vix:>7} {c}')
-            vix +=1
+            vix += 1
             #  10  45   9
+        break
