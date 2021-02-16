@@ -5,7 +5,7 @@
 from threading import Thread
 from timeit import Timer, timeit
 from itertools import islice, combinations
-from typing import Iterable
+from typing import Counter, Iterable, List
 import os
 
 # https://juejin.cn/post/6844903574774759437
@@ -110,7 +110,17 @@ class yieldcombin:
             yield islice(self.combin_list, self.psize)
             self.min += self.psize
 
+    def fibonacci(n: int) -> List[int]:
+        a, b, counter = 0, 1, 0
+        while True:
+            if counter > n:
+                return
+            yield a
+            a, b = b, a + b
+            counter += 1
+
 
 if __name__ == '__main__':
     # code_ts2()
     code_ts2()
+    

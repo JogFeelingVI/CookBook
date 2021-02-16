@@ -15,15 +15,14 @@ def gengs():
 	for x in lists:
 		print(x, end=' ')
 
-def yields():
-	def ysc(max:int=10):
-		for x in range(max+1):
-			if x %2 ==0:
-				yield x
-	print(ysc(10))
-	eysc = ysc(10)
-	for x in eysc:
-		print(x, end=' ')
+def yields(index:int=0):
+	print(f'index [ {index:^3} ]')
+	while index <= 10:
+		yield index
+		print('x')
+		index += 1
+	print(f'edx [ {index:^3} ]')
 
 if __name__ == '__main__':
-	yields()
+	for x in yields():
+		print(x)
