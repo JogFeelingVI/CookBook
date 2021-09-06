@@ -5,24 +5,28 @@
 # @Link	: blog.sina.com.cn/lifelse
 # @Name	: yield.py
 
-def list():
-	list = [x*x for x in range(10)]
-	for x in list:
-		print(x, end=' ')
+from itertools import product, islice
 
-def gengs():
-	lists = (x*x for x in range(10))
-	for x in lists:
-		print(x, end=' ')
+def listx():
+	d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+	return product(d, d, d, d, d)
 
-def yields(index:int=0):
-	print(f'index [ {index:^3} ]')
-	while index <= 10:
-		yield index
-		print('x')
+def gengs(xls):
+	for x in xls:
+		print(x)
+	print('end')
+
+def yields(index:int=0, xls=None):
+	while index <=10:
+		yield islice(xls, 10)
 		index += 1
-	print(f'edx [ {index:^3} ]')
+
+def main():
+	d = [1, 2 ,3 ,4 ,5 ,6 ,7, 8, 9, 0]
+	x = product(d, repeat=5)
+	jie = yields(xls=x)
+	for j in jie:
+		gengs(j)
 
 if __name__ == '__main__':
-	for x in yields():
-		print(x)
+	main()
