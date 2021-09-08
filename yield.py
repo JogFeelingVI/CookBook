@@ -5,6 +5,7 @@
 # @Link	: blog.sina.com.cn/lifelse
 # @Name	: yield.py
 
+import itertools
 import multiprocessing
 from itertools import product, islice
 from typing import Iterable
@@ -14,22 +15,32 @@ def listx():
 	return product(d, d, d, d, d)
 
 def gengs(xls:Iterable):
-	for x in xls:
-		print(x)
-	print('end')
+	i, z = xls
+	z = [f'{x}' for x in z]
+	iz = f'{i}: {z}'
+	return iz
 
-def yields(index:int=0, xls=None):
-	while index <= 3:
-		yield islice(xls, 0, 10)
+def yields(max:int=0, xls=None):
+	index = 0
+	while index <= max:
+		yield islice(xls, 0, 2)
 		index += 1
+
+def grouper(inputs, n, fillvalue=None):
+	iters = [iter(inputs)] * n
+	return itertools.zip_longest(*iters, fillvalue=fillvalue)
+
+def zip_index(lis:list):
+	return zip(itertools.count(), lis)
 
 def main():
 	d = [1, 2 ,3 ,4 ,5 ,6 ,7, 8, 9, 0]
-	x = product(d, repeat=4)
-	jie = yields(0, x)
-	for x in jie:
-		print(list(x))
-	#x = map(gengs, jie)
+	x = product(d, repeat=9)
+	jie = yields(100000, x)
+	zjie = zip_index(jie)
+	print(isinstance(zjie, Iterable))
+	resn = map(gengs, zjie)
+	print(list(resn))
 
 if __name__ == '__main__':
 	main()
