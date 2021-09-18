@@ -3,7 +3,7 @@
 # @Last Modified by:   By JogFeelingVi
 # @Last Modified time: 2021-09-10 23:06:53
 import multiprocessing as mlp, itertools as iterT, functools as funs, os, time
-from multiprocessing.synchronize import SemLock
+from functools import partial
 
 
 class mTask:
