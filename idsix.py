@@ -10,15 +10,39 @@ class ChecksumID:
     '''
     idx[18]
     '''
-    Coefficient = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
-    idx_18 = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2]
+    __Coefficient = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+    __idx_18 = [1, 0, 'x', 9, 8, 7, 6, 5, 4, 3, 2]
+    __Coeff = False
+    __Code = -1
 
-    def __init__(self, idx: str = '420321198112230058') -> None:
+    @property
+    def Code(self) -> str:
+        '''
+        Coefficient CODE
+        '''
+        return self.__Code
+
+    @Code.setter
+    def Code(self, v):
+        self.__Code = f'{v}'
+
+    @property
+    def Coeff(self) -> bool:
+        return self.__Coeff
+
+    @Coeff.setter
+    def Coeff(self, v:bool):
+        self.__Coeff = v
+
+    def __init__(self, idx: str = '53010219200508011x') -> None:
         m = re.match('[0-9]{17}', idx)
         if m is not None:
-            id_17 = m.string[0, 17]
+            id_17 = m.string[0:17]
+            coef = (int(id_17[i]) * self.__Coefficient[i] for i in range(0, 17))
+            self.Code = self.__idx_18[sum(coef) % 11]
+            self.Coeff = True if idx[-1].lower() == self.Code else False
         else:
-            return False
+            self.Coeff = False
 
 
 class idx:
@@ -35,8 +59,13 @@ class idx:
         for n, idx in self.__data:
             print(f'Data: Na {n}, Idx {idx}')
 
+    @property
     def debug(self):
-        self.__debug = True
+        return self.__debug
+
+    @debug.setter
+    def debug(self, v:bool):
+        self.__debug = v
 
     def find(self, idx: int = 661400, l: int = 0, r: int = 0):
         '''
@@ -76,5 +105,6 @@ class idx:
 
 
 if __name__ == '__main__':
-    idx = '420321198112230058'
+    idx = '53010219200508011x'
     Test = ChecksumID(idx)
+    print(Test.Code, Test.Coeff)
