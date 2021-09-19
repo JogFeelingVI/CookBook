@@ -2,8 +2,23 @@
 # @Date: 2021-09-19 22:38:39
 # @Last Modified by:   By JogFeelingVi
 # @Last Modified time: 2021-09-19 22:38:39
-import csv, pathlib
+import csv, pathlib, re
 from functools import partial
+
+
+class ChecksumID:
+    '''
+    idx[18]
+    '''
+    Coefficient = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+    idx_18 = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2]
+
+    def __init__(self, idx: str = '420321198112230058') -> None:
+        m = re.match('[0-9]{17}', idx)
+        if m is not None:
+            id_17 = m.string[0, 17]
+        else:
+            return False
 
 
 class idx:
@@ -19,7 +34,7 @@ class idx:
     def look_date(self):
         for n, idx in self.__data:
             print(f'Data: Na {n}, Idx {idx}')
-    
+
     def debug(self):
         self.__debug = True
 
@@ -61,5 +76,5 @@ class idx:
 
 
 if __name__ == '__main__':
-    ix = idx()
-    print(ix.find(661400))
+    idx = '420321198112230058'
+    Test = ChecksumID(idx)
