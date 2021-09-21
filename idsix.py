@@ -5,8 +5,15 @@
 import csv, pathlib, re
 from functools import partial
 
-
-class ChecksumID:
+def splitid(id:str='53010219200508011x') -> tuple:
+    '''
+    id split to ('530102', '19200508', '011', 'x')
+    '''
+    if (idL:=len(id)) != 18:
+        return ('Error', 'args [id] length must be 18')
+    m = re.match(r'([\d]{6})([\d]{8})([\d]{3})([\dXx]{1})', id)
+    return m.groups()
+class Checksum:
     '''
     idx[18]
     '''
@@ -45,7 +52,7 @@ class ChecksumID:
             self.Coeff = False
 
 
-class idx:
+class areacode:
     '''
     name, idsix [\d]{6}
     '''
@@ -105,6 +112,6 @@ class idx:
 
 
 if __name__ == '__main__':
-    idx = '53010219200508011x'
-    Test = ChecksumID(idx)
-    print(Test.Code, Test.Coeff)
+    id = '53010219200508011x'
+    qym, sr, sxm, cs = splitid(id)
+    print(qym, sr, sxm, cs, sep=',')
