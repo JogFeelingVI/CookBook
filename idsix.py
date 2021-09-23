@@ -7,14 +7,16 @@ from functools import partial
 from types import CodeType
 from typing import Iterator
 
-def splitid(id:str='53010219200508011x') -> tuple:
+
+def splitid(id: str = '53010219200508011x') -> tuple:
     '''
     id split to ('530102', '19200508', '011', 'x')
     '''
-    if (idL:=len(id)) != 18:
+    if (idL := len(id)) != 18:
         return ('Error', 'args [id] length must be 18', idL, '')
     m = re.match(r'([\d]{6})([\d]{8})([\d]{3})([\dXx]{1})', id)
     return m.groups()
+
 
 class Gender:
     '''
@@ -22,12 +24,13 @@ class Gender:
     '''
     __code = -1
 
-    def __init__(self, sxm:str='011') -> None:
+    def __init__(self, sxm: str = '011') -> None:
         self.__code = int(sxm) % 2
-    
+
     @property
     def Results(self) -> str:
         return 'Girls' if self.__code == 0 else 'Boby'
+
 
 class Checksum:
     '''
@@ -37,7 +40,7 @@ class Checksum:
     __idx_18 = [1, 0, 'x', 9, 8, 7, 6, 5, 4, 3, 2]
     __Coeff = False
     __Code = -1
- 
+
     @property
     def Code(self) -> str:
         '''
@@ -54,18 +57,17 @@ class Checksum:
         return self.__Coeff
 
     @Coeff.setter
-    def Coeff(self, v:bool):
+    def Coeff(self, v: bool):
         self.__Coeff = v
 
     def __init__(self, idx: str = '53010219200508011x') -> None:
         m = re.match('[0-9]{17}', idx)
         if m is not None:
             id_17 = m.string[0:17]
-            coef = (int(id_17[i]) * self.__Coefficient[i] for i in range(0, 17))
+            coef = (int(id_17[i]) * self.__Coefficient[i]
+                    for i in range(0, 17))
             self.Code = self.__idx_18[sum(coef) % 11]
             self.Coeff = True if idx[-1].lower() == self.Code else False
-        else:
-            self.Coeff = False
 
 
 class areacode:
@@ -83,7 +85,7 @@ class areacode:
         for n, idx in self.__data:
             chcode = lambda x: f'{ord(x)}'
             ncd = ''.join([chcode(x) for x in n])
-            if max_a < (ncdl:=len(ncd)):
+            if max_a < (ncdl := len(ncd)):
                 max_a = ncdl
             print(f'Data: {idx} Address {ncd}')
         print(f'Max Address {max_a/5}')
@@ -93,10 +95,10 @@ class areacode:
         return self.__debug
 
     @debug.setter
-    def debug(self, v:bool):
+    def debug(self, v: bool):
         self.__debug = v
 
-    def findaddress(self, idxL:str= 661400):
+    def findaddress(self, idxL: str = 661400):
         ap = self.findcode(f'{idxL[0:3]}000')
         ac = self.findcode(f'{idxL[0:4]}00')
         ab = self.findcode(f'{idxL[0:5]}0')
@@ -128,7 +130,7 @@ class areacode:
         elif idx > idsix:
             return self.findcode(idx, m, r)
 
-    def findname(self, text:str) -> Iterator:
+    def findname(self, text: str) -> Iterator:
         if text == '':
             return
         lunc = lambda n: text in n[0]
