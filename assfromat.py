@@ -8,8 +8,8 @@ def fromatass():
     '''
     regs = re.compile(r'^Dialogue((?![\u4e00-\u9fa5]).)*$')
     assf = 'the.walking.dead.s11e18.repack.1080p.web.h264-cakes.ass'
-    n_lines = ['; jogfeelingvi']
-    with open(file=assf, mode='r+', encoding='utf-8') as ass:
+    n_lines = []
+    with open(file=assf, mode='r', encoding='utf-8') as ass:
         lines = ass.readlines()
         for line in lines:
             match = re.search(regs, line)
