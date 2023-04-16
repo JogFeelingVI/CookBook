@@ -92,8 +92,9 @@ class simu:
 
     def moni_sub(self):
         self.buildup()
+        spc = ' '*4
         for i, x in self.suanshi.items():
-            print(f'{i:>2}: {x}')
+            print(f'{x}{spc} ', end='')
 
 
 if __name__ == '__main__':
