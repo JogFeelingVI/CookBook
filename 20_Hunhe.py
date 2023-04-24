@@ -9,10 +9,8 @@ from typing import List
 
 
 class way(Enum):
-    keys = [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-    ]
-    Jieguo = [16, 15, 14, 13, 12, 11, 17, 18, 19, 20]
+    keys = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,5,6,7,]
+    Jieguo = [22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
 
     def toV(self):
         return self.value
@@ -20,7 +18,7 @@ class way(Enum):
 
 class ftp(Enum):
     Lens = lambda x: set(x).__len__() == 3
-    Ngolc = lambda x: sum([[0, 1][x >= 10] for x in x]) == 1
+    Ngolc = lambda x: sum([[0, 1][x >= 15] for x in x]) == 1
 
     def __call__(self, T) -> bool:
         return self.value()(T)
@@ -28,7 +26,7 @@ class ftp(Enum):
 
 class simu:
     def __init__(self) -> None:
-        self.original: List[int] = way.keys.toV()[4:-1]
+        self.original: List[int] = way.keys.toV()
         self.suanshi = dict.fromkeys(way.keys.toV(), '-')
         self.filt_T = [ftp.Lens, ftp.Ngolc]
 
