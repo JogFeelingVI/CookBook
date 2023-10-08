@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-07 21:37:18
+# @Last Modified time: 2023-10-08 10:34:38
 
 from asyncio import SafeChildWatcher
 from cProfile import label
@@ -99,7 +99,7 @@ class board:
 
     def loadcsv(self) -> None:
         '''装载CSV文件'''
-        with open('ShuDou - IQ139.csv') as read:
+        with open('ShuDou - IQ180.csv') as read:
             _csvf = csv.reader(read)
             for index, row in enumerate(_csvf):
                 for col, value in enumerate(row):
@@ -127,22 +127,6 @@ class board:
         rec.append([False, True][0 <= r < self.check])
         rec.append([False, True][0 <= c < self.check])
         return [False, True][False not in rec]
-
-    def echo(self):
-        '''显示 self.__array'''
-        # for r in self.__array:
-        #     col = ''.join([f'[{c}]' for c in r])
-        #     print(f'{col}')
-        for r in range(self.check):
-            if r % 3 == 0 and r != 0:
-                print('-' * (self.check + 2) * 2)
-            for c in range(self.check):
-                if c % 3 == 0 and c != 0:
-                    print('| ', end='')
-                if c == self.check - 1:
-                    print(f'{self.get(r,c)}')
-                else:
-                    print(f'{self.get(r,c)} ', end='')
 
 
 class shuduku:
@@ -204,6 +188,30 @@ class difficulty:
         self.Boar = Board
         self.ListCD = ListCD()
         self.__zero()
+
+    def echo_waiting_list(self,
+                          block_size: int = 7,
+                          title: str = 'Waiting List') -> None:
+        '''显示待选列表'''
+        block = block_size if block_size > 5 else 5
+        splic = ['-' * block * 3] * 3
+        f_block = '{b:<{s}}'
+        print(f'\n{title}')
+        for r in range(self.Boar.check):
+            if r == 0 or r % 3 == 0:
+                print(f'*{"+".join(splic)}*')
+            for c in range(self.Boar.check):
+                if c == 0 or c % 3 == 0:
+                    print('|', end='')
+                n = self.Boar.get(r, c)
+                if n == 0:
+                    if (cd := self.ListCD.getid(r, c)) != None:
+                        n = ''.join([f'{x}' for x in cd.Candidate()])
+
+                print(f_block.format(b=n, s=block), end='')
+                if c == self.Boar.check - 1:
+                    print('|')
+        print(f'*{"+".join(splic)}*')
 
     def FixBoard(self) -> None:
         ''' Fix Board for one '''
@@ -303,10 +311,10 @@ def main() -> None:
     diff_set.Naked_Singles()
     diff_set.Hidden_Singles()
     diff_set.FixBoard()
+    diff_set.echo_waiting_list()
     sodu_solve = shuduku(board_def)
     sodu_solve.solve()
-    print(f'Solve ShuDu.....')
-    board_def.echo()
+    diff_set.echo_waiting_list(title='ShuduKu SOLVE')
 
 
 if __name__ == "__main__":
