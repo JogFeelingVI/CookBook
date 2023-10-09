@@ -2,13 +2,13 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-08 10:34:38
+# @Last Modified time: 2023-10-09 23:12:55
 
 from asyncio import SafeChildWatcher
 from cProfile import label
 import csv
 from math import exp
-from typing import List
+from typing import Dict, List
 
 
 class Candidate_database:
@@ -19,6 +19,7 @@ class Candidate_database:
         self.nums = []
         self.ID = f'R{self.row+1}C{self.col+1}'
         self.exp = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+        self.block = (self.row // 3, self.col // 3)
         self.__diff_set = None
 
     def setNums(self) -> set[int]:
@@ -55,26 +56,26 @@ class Candidate_database:
 
 class ListCD:
     ''' Candidate_database 管理类 '''
-    __rows: List[Candidate_database] = []
+    __rows: Dict = {}
 
-    def add(self, item: Candidate_database) -> None:
+    def up(self, item: Candidate_database) -> None:
         '''add 添加数据 并返回索引'''
-        self.__rows.append(item)
+        if isinstance(item, Candidate_database):
+            self.__rows.update({item.ID: item})
 
     @property
     def itemLen(self) -> int:
-        return self.__rows.__len__()
+        return self.__rows.keys().__len__()
 
     def filters(self, funcx) -> List[Candidate_database]:
-        self.temp = [r for r in self.__rows if funcx(r)]
+        self.temp = [r for r in self.__rows.values() if funcx(r)]
         return self.temp
 
     def getid(self, r: int, c: int) -> Candidate_database | None:
         '''where is row and col'''
-        for cd in self.__rows:
-            if cd.ID == f'R{r+1}C{c+1}':
-                return cd
-        return None
+        id = f'R{r+1}C{c+1}'
+        item = self.__rows.get(id, None)
+        return item
 
     def echo(self, T: str = 'Test') -> None:
         '''
@@ -97,9 +98,26 @@ class board:
     def Array(self) -> list:
         return self.__array
 
-    def loadcsv(self) -> None:
+    @property
+    def to_spcode(self) -> str:
+        sp = [f'{c}' for r in self.__array for c in r]
+        return ''.join(sp)
+
+    def loadspcode(self, code: str) -> None:
+        '''
+        00002300000...
+        Len is 81
+        '''
+        for s in range(0, 81, 9):
+            spcode = code[s:s + 9]
+            print(f'spcode R{s//9+1} {spcode}')
+            for col, value in enumerate(spcode):
+                if (n := int(value)) != 0:
+                    self.set(int(s // 9), col, n)
+
+    def loadcsv(self, filename: str) -> None:
         '''装载CSV文件'''
-        with open('ShuDou - IQ180.csv') as read:
+        with open(filename) as read:
             _csvf = csv.reader(read)
             for index, row in enumerate(_csvf):
                 for col, value in enumerate(row):
@@ -190,7 +208,7 @@ class difficulty:
         self.__zero()
 
     def echo_waiting_list(self,
-                          block_size: int = 7,
+                          block_size: int = 8,
                           title: str = 'Waiting List') -> None:
         '''显示待选列表'''
         block = block_size if block_size > 5 else 5
@@ -245,7 +263,7 @@ class difficulty:
             for j in range(box_x * 3, box_x * 3 + 3):
                 if (n := self.Boar.get(i, j)) != 0:
                     cData.addnum(n)
-        self.ListCD.add(cData)
+        self.ListCD.up(cData)
 
     def Naked_Singles(self) -> None:
         '''Naked Singles'''
@@ -272,6 +290,10 @@ class difficulty:
             if len(Sai) == 1:
                 print(f'Hidden Singles: {sa} -> {Sai} From Row')
                 sa.SetCandidate(Sai)
+                print('+ --------------')
+                print(f'sa {sa}')
+                print(f'ListCD {self.ListCD.getid(sa.row,sa.col)}')
+                print('+ --------------')
                 continue
 
             Sai = sa.Candidate()
@@ -303,10 +325,19 @@ class difficulty:
                 sa.SetCandidate(Sai)
                 continue
 
+    def Locked_Candidates(self) -> None:
+        '''
+        Locked Candidates BLock -> ROW OR COL
+        '''
+        pass
+
 
 def main() -> None:
     board_def = board(checksize=9)
-    board_def.loadcsv()
+    # board_def.loadcsv('ShuDou - IQ138.csv')
+    board_def.loadspcode(
+        '000023400004000100050084090601070902793206801000010760000000009800000004060000587'
+    )
     diff_set = difficulty(board_def)
     diff_set.Naked_Singles()
     diff_set.Hidden_Singles()
