@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-09 23:12:55
+# @Last Modified time: 2023-10-10 08:10:40
 
 from asyncio import SafeChildWatcher
 from cProfile import label
@@ -19,7 +19,7 @@ class Candidate_database:
         self.nums = []
         self.ID = f'R{self.row+1}C{self.col+1}'
         self.exp = {1, 2, 3, 4, 5, 6, 7, 8, 9}
-        self.block = (self.row // 3, self.col // 3)
+        self.block = f'{self.row // 3}{self.col // 3}'
         self.__diff_set = None
 
     def setNums(self) -> set[int]:
