@@ -2,12 +2,12 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-10 08:10:40
+# @Last Modified time: 2023-10-10 23:50:31
 
 from asyncio import SafeChildWatcher
 from cProfile import label
 import csv
-from math import exp
+from collections import Counter
 from typing import Dict, List
 
 
@@ -290,10 +290,10 @@ class difficulty:
             if len(Sai) == 1:
                 print(f'Hidden Singles: {sa} -> {Sai} From Row')
                 sa.SetCandidate(Sai)
-                print('+ --------------')
-                print(f'sa {sa}')
-                print(f'ListCD {self.ListCD.getid(sa.row,sa.col)}')
-                print('+ --------------')
+                # print('+ --------------')
+                # print(f'sa {sa}')
+                # print(f'ListCD {self.ListCD.getid(sa.row,sa.col)}')
+                # print('+ --------------')
                 continue
 
             Sai = sa.Candidate()
@@ -329,18 +329,48 @@ class difficulty:
         '''
         Locked Candidates BLock -> ROW OR COL
         '''
-        pass
+        blocklist = ['00', '01', '02', '10', '11', '12', '20', '21', '22']
+        for blist in blocklist:
+            bfilte = self.ListCD.filters(lambda x: x.block == blist)
+            Candidate_List = [y for x in bfilte for y in x.Candidate()]
+            key, count = Counter(Candidate_List).most_common()[-1]
+            if count == 2:
+                _a, _b = [x for x in bfilte if key in x.Candidate()]
+                ab_filter = None
+                ranc = 'None'
+                if _a.row == _b.row:
+                    # 行相同
+                    ab_filter = self.ListCD.filters(
+                        lambda x: x.row == _a.row and x.col not in
+                        [_a.col, _b.col])
+                    ranc = 'Row'
+                if _a.col == _b.col:
+                    # 列相同
+                    ab_filter = self.ListCD.filters(
+                        lambda x: x.col == _a.col and x.row not in
+                        [_a.row, _b.row])
+                    ranc = 'Col'
+                if ab_filter != None:
+                    abf_key = [y for x in ab_filter for y in x.Candidate()]
+                    if key in abf_key:
+                        print(
+                            f'Locked Candidates: Block / {ranc} {blist} -> {key}'
+                        )
+                        for ab_f in ab_filter:
+                            acand = ab_f.Candidate() - {key}
+                            ab_f.SetCandidate(acand)
 
 
 def main() -> None:
     board_def = board(checksize=9)
-    # board_def.loadcsv('ShuDou - IQ138.csv')
-    board_def.loadspcode(
-        '000023400004000100050084090601070902793206801000010760000000009800000004060000587'
-    )
+    board_def.loadcsv('ShuDou - IQ138.csv')
+    # board_def.loadspcode(
+    #     '000023400004000100050084090601070902793206801000010760000000009800000004060000587'
+    # )
     diff_set = difficulty(board_def)
     diff_set.Naked_Singles()
     diff_set.Hidden_Singles()
+    diff_set.Locked_Candidates()
     diff_set.FixBoard()
     diff_set.echo_waiting_list()
     sodu_solve = shuduku(board_def)
