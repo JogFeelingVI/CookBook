@@ -2,10 +2,9 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-11 08:26:56
+# @Last Modified time: 2023-10-11 12:19:28
 
-from asyncio import SafeChildWatcher
-from cProfile import label
+from itertools import product
 import csv
 from collections import Counter
 from typing import Dict, List
@@ -87,64 +86,59 @@ class ListCD:
 
 
 class board:
-    '''数独 数字结构'''
-    def __init__(self, checksize: int = 9) -> None:
-        '''checksize 格子大小 最小为 9'''
-        self.check = checksize if checksize in [9] else 9
-        self.__array = [[0 for _ in range(self.check)]
-                        for _ in range(self.check)]
+    ''' 数独结构 '''
+    base = {0, 1, 2, 3, 4, 5, 6, 7, 8}
+
+    def __init__(self) -> None:
+        '''(0,0):0'''
+        id = product(self.base, repeat=2)
+        self.__id_dict = dict.fromkeys(id, 0)
 
     @property
-    def Array(self) -> list:
-        return self.__array
+    def Array(self) -> dict:
+        '''
+        Find Zero
+        '''
+        return self.__id_dict
 
     @property
-    def to_spcode(self) -> str:
-        sp = [f'{c}' for r in self.__array for c in r]
-        return ''.join(sp)
+    def spcode(self) -> str:
+        '''spcode 000806001...'''
+        spcode_L = [f'{c}' for c in self.__id_dict.values()]
+        return ''.join(spcode_L)
 
-    def loadspcode(self, code: str) -> None:
-        '''
-        00002300000...
-        Len is 81
-        '''
-        for s in range(0, 81, 9):
-            spcode = code[s:s + 9]
-            print(f'spcode R{s//9+1} {spcode}')
-            for col, value in enumerate(spcode):
-                if (n := int(value)) != 0:
-                    self.set(int(s // 9), col, n)
+    def Load_spcode(self, code: str) -> None:
+        '''装载 spcode'''
+        if len(code) == 81:
+            for i, id in enumerate(self.__id_dict.keys()):
+                if (c := int(code[i])) != 0:
+                    self.__id_dict.update({id: c})
+        else:
+            print('code len is not 81')
 
-    def loadcsv(self, filename: str) -> None:
-        '''装载CSV文件'''
+    def Load_csv(self, filename: str) -> None:
+        '''Load_csv('ShuDou - IQ138.csv') '''
         with open(filename) as read:
             _csvf = csv.reader(read)
             for index, row in enumerate(_csvf):
                 for col, value in enumerate(row):
                     if value != '':
-                        self.set(index, col, int(value))
+                        self.__id_dict.update({(index, col): int(value)})
+                        #self.set(index, col, int(value))
 
     def set(self, row: int, col: int, value: int) -> None:
         ''' 设置坐标的数值 '''
-        if self.__check_set_args(row, col, value):
-            self.__array[row][col] = value
+        if (row, col) in self.__id_dict.keys():
+            self.__id_dict.update({(row, col): value})
         else:
             raise IndexError(f'Row & Col Error POS {row},{col},{value}')
 
     def get(self, row: int, col: int) -> int:
         '''获取坐标的数值'''
-        if self.__check_set_args(row, col, 9):
-            return self.__array[row][col]
+        if (row, col) in self.__id_dict.keys():
+            return self.__id_dict.get((row, col), 0)
         else:
             raise IndexError(f'Row & Col Error POS {row},{col}')
-
-    def __check_set_args(self, r: int, c: int, v: int) -> bool:
-        ''' 检查 fun set 参数是否合理 '''
-        rec = []
-        rec.append([False, True][0 <= v <= self.check])
-        rec.append([False, True][0 <= r < self.check])
-        rec.append([False, True][0 <= c < self.check])
-        return [False, True][False not in rec]
 
 
 class shuduku:
@@ -157,9 +151,9 @@ class shuduku:
 
     def find_zero(self) -> tuple[int, int] | None:
         '''查找需要填写数字的坐标'''
-        for r in range(self.Boar.check):
-            for c in range(self.Boar.check):
-                if self.Boar.Array[r][c] == 0:
+        for r in self.Boar.base:
+            for c in self.Boar.base:
+                if self.Boar.get(r, c) == 0:
                     return (r, c)  # row, col
         return None
 
@@ -171,9 +165,10 @@ class shuduku:
         else:
             row, col = find
 
-        for num in range(1, self.Boar.check + 1):
-            if self.valid(num, row, col):
-                self.Boar.set(row, col, num)
+        for num in self.Boar.base:
+            N = num + 1
+            if self.valid(N, row, col):
+                self.Boar.set(row, col, N)
                 if self.solve():
                     return True
                 self.Boar.set(row, col, 0)
@@ -182,12 +177,12 @@ class shuduku:
     def valid(self, num: int, row: int, col: int) -> bool:
         '''验证所填数字是否符合规范'''
         # Check row
-        for field in range(self.Boar.check):
+        for field in self.Boar.base:
             if self.Boar.get(row, field) == num and col != field:
                 return False
 
         # Check column
-        for line in range(self.Boar.check):
+        for line in self.Boar.base:
             if self.Boar.get(line, col) == num and row != line:
                 return False
         # Check box
@@ -215,10 +210,10 @@ class difficulty:
         splic = ['-' * block * 3] * 3
         f_block = '{b:<{s}}'
         print(f'\n{title}')
-        for r in range(self.Boar.check):
+        for r in self.Boar.base:
             if r == 0 or r % 3 == 0:
                 print(f'*{"+".join(splic)}*')
-            for c in range(self.Boar.check):
+            for c in self.Boar.base:
                 if c == 0 or c % 3 == 0:
                     print('|', end='')
                 n = self.Boar.get(r, c)
@@ -227,7 +222,7 @@ class difficulty:
                         n = ''.join([f'{x}' for x in cd.Candidate()])
 
                 print(f_block.format(b=n, s=block), end='')
-                if c == self.Boar.check - 1:
+                if c == 8:
                     print('|')
         print(f'*{"+".join(splic)}*')
 
@@ -240,20 +235,20 @@ class difficulty:
             self.Boar.set(r, c, v)
 
     def __zero(self) -> None:
-        for r in range(self.Boar.check):
-            for c in range(self.Boar.check):
-                if self.Boar.Array[r][c] == 0:
+        for r in self.Boar.base:
+            for c in self.Boar.base:
+                if self.Boar.get(r, c) == 0:
                     self.__initialization(r, c)  # row, col
 
     def __initialization(self, row: int, col: int) -> None:
         '''落单查询'''
         cData = Candidate_database(row, col)
         # Check row
-        for c in range(self.Boar.check):
+        for c in self.Boar.base:
             if (n := self.Boar.get(row, c)) != 0:
                 cData.addnum(n)
         # Check col
-        for r in range(self.Boar.check):
+        for r in self.Boar.base:
             if (n := self.Boar.get(r, col)) != 0:
                 cData.addnum(n)
         # Check box
@@ -281,7 +276,7 @@ class difficulty:
         for sa in step_a:
             Sai = sa.Candidate()
             #Check row
-            for r in range(self.Boar.check):
+            for r in self.Boar.base:
                 getid = self.ListCD.getid(r, sa.col)
                 if getid != None and getid != sa:
                     Sai = Sai - getid.Candidate()
@@ -298,7 +293,7 @@ class difficulty:
 
             Sai = sa.Candidate()
             #Check col
-            for c in range(self.Boar.check):
+            for c in self.Boar.base:
                 getid = self.ListCD.getid(sa.row, c)
                 if getid != None and getid != sa:
                     Sai = Sai - getid.Candidate()
@@ -311,15 +306,22 @@ class difficulty:
 
             Sai = sa.Candidate()
             # Check box
-            box_x = sa.col // 3
-            box_y = sa.row // 3
-            for i in range(box_y * 3, box_y * 3 + 3):
-                for j in range(box_x * 3, box_x * 3 + 3):
-                    getid = self.ListCD.getid(i, j)
-                    if getid != None and getid != sa:
-                        Sai = Sai - getid.Candidate()
-                        if len(Sai) == 0:
-                            break
+            # box_x = sa.col // 3
+            # box_y = sa.row // 3
+            # for i in range(box_y * 3, box_y * 3 + 3):
+            #     for j in range(box_x * 3, box_x * 3 + 3):
+            #         getid = self.ListCD.getid(i, j)
+            #         if getid != None and getid != sa:
+            #             Sai = Sai - getid.Candidate()
+            #             if len(Sai) == 0:
+            #                 break
+            # New Funx
+            block = self.ListCD.filters(lambda x: x.block == sa.block)
+            for boc in block:
+                if boc != sa:
+                    Sai = Sai - boc.Candidate()
+                    if len(Sai) == 0:
+                        break
             if len(Sai) == 1:
                 print(f'Hidden Singles: {sa} -> {Sai} From Box')
                 sa.SetCandidate(Sai)
@@ -362,8 +364,8 @@ class difficulty:
 
 
 def main() -> None:
-    board_def = board(checksize=9)
-    board_def.loadcsv('ShuDou - IQ138.csv')
+    board_def = board()
+    board_def.Load_csv('ShuDou - IQ138.csv')
     # board_def.loadspcode(
     #     '000023400004000100050084090601070902793206801000010760000000009800000004060000587'
     # )
