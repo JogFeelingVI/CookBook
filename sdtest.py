@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-11 12:19:28
+# @Last Modified time: 2023-10-11 19:46:40
 
 from itertools import product
 import csv
@@ -151,10 +151,12 @@ class shuduku:
 
     def find_zero(self) -> tuple[int, int] | None:
         '''查找需要填写数字的坐标'''
-        for r in self.Boar.base:
-            for c in self.Boar.base:
-                if self.Boar.get(r, c) == 0:
-                    return (r, c)  # row, col
+        idc = product(self.Boar.base, repeat=2)
+        for item in idc:
+            r, c = item
+            if self.Boar.get(r, c) == 0:
+                return (r, c)
+
         return None
 
     def solve(self) -> bool:
