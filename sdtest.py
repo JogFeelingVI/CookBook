@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-10 23:50:31
+# @Last Modified time: 2023-10-11 08:26:56
 
 from asyncio import SafeChildWatcher
 from cProfile import label
@@ -354,7 +354,7 @@ class difficulty:
                     abf_key = [y for x in ab_filter for y in x.Candidate()]
                     if key in abf_key:
                         print(
-                            f'Locked Candidates: Block / {ranc} {blist} -> {key}'
+                            f'Locked Candidates: Block {blist} -> {{{key}}} from {ranc}'
                         )
                         for ab_f in ab_filter:
                             acand = ab_f.Candidate() - {key}
