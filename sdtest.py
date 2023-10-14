@@ -2,12 +2,12 @@
 # @Author: JogFeelingVI
 # @Date:   2023-10-01 07:34:51
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-10-11 19:46:40
+# @Last Modified time: 2023-10-12 20:52:04
 
 from itertools import product
 import csv
 from collections import Counter
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 class Candidate_database:
@@ -148,6 +148,12 @@ class shuduku:
     def __init__(self, Board: board) -> None:
         ''' 解算数独的运算单位 '''
         self.Boar = Board
+        self.__lcd = None
+
+    def UseListcd(self, value: ListCD):
+        '''设置 ListCD'''
+        if value != None:
+            self.__lcd = value
 
     def find_zero(self) -> tuple[int, int] | None:
         '''查找需要填写数字的坐标'''
@@ -167,10 +173,18 @@ class shuduku:
         else:
             row, col = find
 
-        for num in self.Boar.base:
-            N = num + 1
-            if self.valid(N, row, col):
-                self.Boar.set(row, col, N)
+        lcd = []
+        if self.__lcd != None:
+            if (n := self.__lcd.getid(row, col)) != None:
+                lcd = n.Candidate()
+            else:
+                lcd = [x + 1 for x in self.Boar.base]
+        else:
+            lcd = [x + 1 for x in self.Boar.base]
+
+        for num in lcd:
+            if self.valid(num, row, col):
+                self.Boar.set(row, col, num)
                 if self.solve():
                     return True
                 self.Boar.set(row, col, 0)
@@ -367,10 +381,10 @@ class difficulty:
 
 def main() -> None:
     board_def = board()
-    board_def.Load_csv('ShuDou - IQ138.csv')
-    # board_def.loadspcode(
-    #     '000023400004000100050084090601070902793206801000010760000000009800000004060000587'
-    # )
+    # board_def.Load_csv('ShuDou - IQ138.csv')
+    board_def.Load_spcode(
+        '054007690000040000009000000000158004005230008008000150000400503506080209002005000'
+    )
     diff_set = difficulty(board_def)
     diff_set.Naked_Singles()
     diff_set.Hidden_Singles()
@@ -378,6 +392,7 @@ def main() -> None:
     diff_set.FixBoard()
     diff_set.echo_waiting_list()
     sodu_solve = shuduku(board_def)
+    sodu_solve.UseListcd(diff_set.ListCD)
     sodu_solve.solve()
     diff_set.echo_waiting_list(title='ShuduKu SOLVE')
 
