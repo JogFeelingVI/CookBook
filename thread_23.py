@@ -2,15 +2,44 @@
 # @Author: JogFeelingVI
 # @Date:   2023-12-16 16:04:18
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2023-12-16 22:54:15
+# @Last Modified time: 2023-12-18 10:43:52
 
+from asyncio import as_completed
+import html
 from io import TextIOWrapper
-import urllib.request, time, threading, re, queue
+import urllib.request, time, threading, re, queue, concurrent.futures
 
 urls = [
     'http://www.python.org/', 'https://www.baidu.com',
     'https://www.google.com', 'https://sspai.com', 'https://www.appinn.com'
 ]
+
+
+def thpool_craw():
+    with concurrent.futures.ThreadPoolExecutor() as tpool:
+        futs = {}
+        # html = tpool.map(gethood, urls)
+        # htmls = zip(urls, html)
+        # for u, h in htmls:
+        #     print(f'Http test {u} {len(h)}')
+        htms = []
+        for u in urls:
+            fut = tpool.submit(gethood, u)
+            futs[fut] = u
+        for f in concurrent.futures.as_completed(futs):
+            u = futs[f]
+            h = f.result()
+            htms.append((u, h))
+            print(f'URL {u} {len(h)}')
+        futs = {}
+        for u, h in htms:
+            f = tpool.submit(pares, h)
+            futs[f] = u
+
+        for f in concurrent.futures.as_completed(futs):
+            u = futs[f]
+            links = f.result()
+            print(f'URL {u} links {len(links)}')
 
 
 def do_gethood(uq: queue.Queue, pq: queue.Queue):
@@ -121,6 +150,6 @@ def code():
 
 
 if __name__ == "__main__":
-    code()
+    #code()
     #mu_thread()
-    do_wallking()
+    thpool_craw()
