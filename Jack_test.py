@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2024-03-22 13:50:54
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2024-03-23 08:16:36
+# @Last Modified time: 2024-03-23 22:40:35
 import asyncio, concurrent.futures, random, time
 
 
@@ -12,11 +12,11 @@ def task(index: int):
     en = [index / x for x in range(2, random.randint(100, 1000))]
     return sum(en) / en.__len__()
 
+
 async def shell(cmd='', sleep=0):
+    print(f'{cmd = }, {sleep=} is start.')
     proc = await asyncio.create_subprocess_shell(
-        cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE)
+        cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 
     stdout, stderr = await proc.communicate()
 
@@ -53,7 +53,7 @@ async def main():
         name = random.choices(base, k=5)
         maxs = random.randint(1000, 10000)
         # setc =random.randint(1, 6)
-        lisrt.append(Gonren(''.join(name), x,  maxs))
+        lisrt.append(Gonren(''.join(name), x, maxs))
         # lisrt.append(runCMD(f'ls {x}', sleep=setc))
 
     print(f'{time.strftime("%X"):_^20}')
@@ -64,16 +64,15 @@ async def main():
 
 async def command():
     lisrt = []
-    for x in ['lsof -ti :8080', 'ls /', 'ls ~/Download']:
-        setc =random.randint(1, 6)
+    for x in ['sleep', 'quick', 'fast', 'sleep', '', 'quick', 'sleep']:
+        setc = random.randint(1, 6)
         # lisrt.append(Gonren(''.join(name), x,  maxs))
-        lisrt.append(shell(f'{x}', sleep=setc))
+        lisrt.append(shell(f'curl -L "192.168.1.159:8080/{x}"', sleep=setc))
 
     print(f'{time.strftime("%X"):_^20}')
     await asyncio.sleep(3)
     rest = await asyncio.gather(*lisrt)
     print(f'Test done! "{time.strftime("%X")}"')
-
 
 
 if __name__ == "__main__":
