@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2024-03-27 08:06:09
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2024-03-27 10:08:41
+# @Last Modified time: 2024-04-11 22:08:34
 from enum import IntEnum, Enum
 import random
 
@@ -47,6 +47,18 @@ dictmap = {
 }
 
 
+def convert_to_binary(num):
+    """
+    将数字转换为二进制字符串。
+
+    Args:
+        num: 要转换的数字。
+
+    Returns:
+        二进制字符串表示形式。
+    """
+    return format(num, "06b") 
+
 def main():
     bGua = random.choices(list(BaGua), k=6)
     print(f'Hello, World! ☯️')
@@ -87,7 +99,9 @@ def main():
             case {'GEN': name,**qita} if not qita:
                 print(f'---qita not-----{name =}')
         
-
+def ErToBahua():
+    binary_nums = {convert_to_binary(num):num for num in range(1, 34)}
+    print(f'{binary_nums["010111"]}')
 
 if __name__ == "__main__":
-    main()
+    ErToBahua()
