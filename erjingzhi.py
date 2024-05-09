@@ -2,7 +2,7 @@
 # @Author: JogFeelingVI
 # @Date:   2024-05-08 22:21:02
 # @Last Modified by:   JogFeelingVI
-# @Last Modified time: 2024-05-08 22:59:57
+# @Last Modified time: 2024-05-09 10:22:24
 
 
 def convert_to_binary(num: int):
@@ -53,7 +53,7 @@ def levenshtein_distance(bina: str, binb: str):
 
 def main():
     tmp = ""
-    bls = [11, 6, 10, 10, 13, 6, 13, 5, 4, 10, 2, 16, 5, 4, 6, 2, 13, 2, 10, 2, 16, 14, 8, 6, 3, 15, 15, 2, 11, 2, 6]
+    bls =[2, 1, 3, 8, 4, 2, 3, 12, 1, 9, 1, 6, 2, 5, 2, 1, 8, 2, 11, 2, 2, 4, 2, 2, 2, 7, 2, 12, 1, 5]
     ctobin = [[x, convert_to_binary(x)] for x in bls]
     print("convert_to_binary")
     dp = 0
@@ -65,15 +65,14 @@ def main():
 
 
 def temp_bit7():
-    bins = [6, "000110"]
+    bins = [6, "000101"]
     tmp = []
-    for n in range(1, 17):
+    for n in range(1, 34):
         bin_n = convert_to_binary(n)
         dp_n = levenshtein_distance(bins[1], bin_n)
-        if dp_n == 2:
+        if dp_n in [1,2]:
             tmp.append(f"{n:>02}, {bin_n}, {dp_n}")
             print(f"{tmp[-1]}")
 
 
-if __name__ == "__main__":
-    temp_bit7()
+if __name__ == "__main__":    temp_bit7()
